@@ -12,12 +12,13 @@ const navItems: NavItem[] = [
   {
     id: 'home',
     label: 'Houston & 6th',
-    href: '/?location=M120A-BASEBALL-1&name=Houston%20%26%206th',
+    href: '/nyc-parks-schedule?parkfield=M120A-BASEBALL-1&name=Houston%20%26%206th',
   },
-  // { id: 'parks', label: 'Parks', href: '/parks' },
-  // { id: 'schedule', label: 'Schedule', href: '/schedule' },
-  // { id: 'events', label: 'Events', href: '/events' },
-  // { id: 'about', label: 'About', href: '/about' },
+  {
+    id: 'home',
+    label: 'McCarren',
+    href: '/nyc-parks-schedule?parkfield=B058-ZN04-BASEBALL-3&name=McCarren%20Asphalt%20%2F%20Softball',
+  },
 ];
 
 export default function Nav() {
@@ -102,10 +103,10 @@ export default function Nav() {
       >
         <div className='mb-8'>
           <h2 className='text-xl font-bold text-gray-900 dark:text-white'>
-            NYC Parks Availability
+            NYC Parks Field Availability
           </h2>
           <p className='text-sm text-gray-600 dark:text-gray-400'>
-            Not affiliated with the parks department
+            Not affiliated with the parks department.
           </p>
         </div>
 
@@ -148,6 +149,9 @@ export default function Nav() {
               </button>
             </li>
           ))}
+          <li>
+            Have another park you want to add? DM Amogh on Pickleball slack
+          </li>
         </ul>
       </nav>
     </>

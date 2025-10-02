@@ -21,15 +21,15 @@ export default function Home() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const name = urlParams.get('name');
-    const location = urlParams.get('location');
+    const parkfield = urlParams.get('parkfield');
 
     setName(name || '');
 
     // Make request if location parameter exists
-    if (location) {
+    if (parkfield) {
       setIsLoading(true);
       const apiUrl = `https://picklebot-761922005699.europe-west1.run.app?location=${encodeURIComponent(
-        location,
+        parkfield,
       )}`;
 
       fetch(apiUrl)
@@ -57,11 +57,13 @@ export default function Home() {
         {name}
       </h1>
       <p className='text-gray-600 dark:text-gray-400'>
-        {name ? 'Times the park is booked' : 'Pick a park to see availability'}
+        {name
+          ? 'Times the field is reserved'
+          : 'Select a park to see availability'}
       </p>
       <div className='overflow-x-auto'>
         {name && !isLoading ? (
-          <table className='min-w-full border border-gray-300 dark:border-gray-600 rounded-lg'>
+          <table className='min-w-full border border-gray-300 dark:border-gray-600 rounded-lg mt-8'>
             <thead className='bg-gray-50 dark:bg-gray-800'>
               <tr>
                 <th className='px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-white border-b border-gray-300 dark:border-gray-600'>
