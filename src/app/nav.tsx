@@ -10,21 +10,28 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   {
-    id: 'home',
+    id: 'Houston',
     label: 'Houston & 6th',
     href: '/nyc-parks-schedule?parkfield=M120A-BASEBALL-1&name=Houston%20%26%206th',
   },
   {
-    id: 'home',
+    id: 'McCarren',
     label: 'McCarren',
     href: '/nyc-parks-schedule?parkfield=B058-ZN04-BASEBALL-3&name=McCarren%20Asphalt%20%2F%20Softball',
+  },
+  {
+    id: 'Ericsson',
+    label: 'Ericsson',
+    href: '/nyc-parks-schedule?parkfield=B058-ZN04-BASEBALL-3&name=Ericsson%20Playground',
   },
 ];
 
 export default function Nav() {
-  const [activeItem] = useState('home');
+  const [activeItem, setActiveItem] = useState('Houston');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -37,15 +44,29 @@ export default function Nav() {
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
 
+  useEffect(() => {
+    // Detect active item from URL
+    const params = new URLSearchParams(window.location.search);
+    const parkfield = params.get('parkfield');
+
+    if (parkfield === 'M120A-BASEBALL-1') {
+      setActiveItem('Houston');
+    } else if (parkfield === 'B058-ZN04-BASEBALL-3') {
+      const name = params.get('name');
+      if (name?.includes('McCarren')) {
+        setActiveItem('McCarren');
+      } else if (name?.includes('Ericsson')) {
+        setActiveItem('Ericsson');
+      }
+    }
+  }, []);
+
   const copyToClipboard = async (href: string) => {
     const fullUrl = `${window.location.origin}${href}`;
-    try {
-      await navigator.clipboard.writeText(fullUrl);
-      // You could add a toast notification here
-      alert(`URL copied to clipboard: ${fullUrl}`);
-    } catch (err) {
-      console.error('Failed to copy URL:', err);
-    }
+    await navigator.clipboard.writeText(fullUrl);
+    setToastMessage('URL copied to clipboard!');
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
   };
 
   return (
@@ -112,12 +133,12 @@ export default function Nav() {
 
         <ul className='space-y-2'>
           {navItems.map(item => (
-            <li key={item.id} className='flex items-center gap-2'>
+            <li key={item.id} className='flex items-center gap-2 h-12'>
               <a
                 href={item.href}
                 className={`flex-1 text-left px-4 py-3 rounded-l-lg transition-colors duration-200 ${
                   activeItem === item.id
-                    ? 'bg-blue-500 text-white'
+                    ? 'bg-blue-500 hover:bg-blue-600 text-white'
                     : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                 }`}
               >
@@ -125,7 +146,7 @@ export default function Nav() {
               </a>
               <button
                 onClick={() => copyToClipboard(item.href)}
-                className={`px-4 py-3 rounded-r-lg transition-colors duration-200 ${
+                className={`rounded-r-lg transition-colors duration-200 h-full w-12 flex items-center justify-center ${
                   activeItem === item.id
                     ? 'bg-blue-500 hover:bg-blue-600 text-white'
                     : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
@@ -149,11 +170,18 @@ export default function Nav() {
               </button>
             </li>
           ))}
-          <li>
+          <li className='text-sm text-gray-600 dark:text-gray-400 mt-4'>
             Have another park you want to add? DM Amogh on Pickleball slack
           </li>
         </ul>
       </nav>
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div className='fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-lg shadow-lg transition-opacity duration-300'>
+          {toastMessage}
+        </div>
+      )}
     </>
   );
 }
