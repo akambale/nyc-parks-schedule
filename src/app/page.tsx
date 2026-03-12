@@ -1,7 +1,29 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-// Loading Component
+interface TimeBlock {
+  startTime: string;
+  endTime: string;
+}
+
+type Schedule = Record<string, TimeBlock[]>;
+
+function formatDate(dateString: string): string {
+  const date = new Date(dateString + 'T00:00:00');
+  const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+  const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+  return `${dayName} ${monthName} ${date.getDate()}`;
+}
+
+function formatBlocks(blocks: TimeBlock[]): string {
+  if (blocks.length === 0) {
+    return 'Field is available all day';
+  }
+  return blocks
+    .map(b => `${b.startTime.replace(/^0/, '')} - ${b.endTime.replace(/^0/, '')}`)
+    .join('; ');
+}
+
 function LoadingSpinner() {
   return (
     <div className='flex items-center justify-center p-4'>
@@ -15,7 +37,7 @@ function LoadingSpinner() {
 
 export default function Home() {
   const [name, setName] = useState('');
-  const [schedule, setSchedule] = useState<Record<string, string>>({});
+  const [schedule, setSchedule] = useState<Schedule>({});
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -25,10 +47,9 @@ export default function Home() {
 
     setName(name || '');
 
-    // Make request if location parameter exists
     if (parkfield) {
       setIsLoading(true);
-      const apiUrl = `https://picklebot-761922005699.europe-west1.run.app?location=${encodeURIComponent(
+      const apiUrl = `/api/availability?location=${encodeURIComponent(
         parkfield,
       )}`;
 
@@ -75,16 +96,16 @@ export default function Home() {
               </tr>
             </thead>
             <tbody>
-              {Object.entries(schedule).map(([date, times]) => (
+              {Object.entries(schedule).map(([date, blocks]) => (
                 <tr
                   key={date}
                   className='hover:bg-gray-50 dark:hover:bg-gray-700'
                 >
                   <td className='px-4 py-2 text-sm text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-600'>
-                    {date}
+                    {formatDate(date)}
                   </td>
                   <td className='px-4 py-2 text-sm text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-600'>
-                    {times}
+                    {formatBlocks(blocks)}
                   </td>
                 </tr>
               ))}
@@ -93,7 +114,6 @@ export default function Home() {
         ) : null}
       </div>
 
-      {/* Loading Component */}
       {isLoading && <LoadingSpinner />}
     </div>
   );

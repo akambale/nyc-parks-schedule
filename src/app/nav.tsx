@@ -12,17 +12,17 @@ const navItems: NavItem[] = [
   {
     id: 'Houston',
     label: 'Houston & 6th',
-    href: '/nyc-parks-schedule?parkfield=M120A-BASEBALL-1&name=Houston%20%26%206th',
+    href: '/?parkfield=M120A-BASEBALL-1&name=Houston%20%26%206th',
   },
   {
     id: 'McCarren',
     label: 'McCarren',
-    href: '/nyc-parks-schedule?parkfield=B058-ZN04-BASEBALL-3&name=McCarren%20Asphalt%20%2F%20Softball',
+    href: '/?parkfield=B058-ZN04-BASEBALL-3&name=McCarren%20Asphalt%20%2F%20Softball',
   },
   {
     id: 'Ericsson',
     label: 'Ericsson',
-    href: '/nyc-parks-schedule?parkfield=B058-ZN04-BASEBALL-3&name=Ericsson%20Playground',
+    href: '/?parkfield=B058-ZN04-BASEBALL-3&name=Ericsson%20Playground',
   },
 ];
 
