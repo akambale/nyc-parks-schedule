@@ -12,52 +12,30 @@ const navItems: NavItem[] = [
   {
     id: 'Houston',
     label: 'Houston & 6th',
-    href: '/?parkfield=M120A-BASEBALL-1&name=Houston%20%26%206th',
+    href: '/houston',
   },
   {
     id: 'McCarren',
     label: 'McCarren',
-    href: '/?parkfield=B058-ZN04-BASEBALL-3&name=McCarren%20Asphalt%20%2F%20Softball',
+    href: '/mccarren',
   },
   {
     id: 'Ericsson',
     label: 'Ericsson',
-    href: '/?parkfield=B058-ZN04-BASEBALL-3&name=Ericsson%20Playground',
+    href: '/ericsson',
   },
 ];
 
 export default function Nav() {
-  const [activeItem, setActiveItem] = useState('Houston');
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [activeItem, setActiveItem] = useState('');
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
   useEffect(() => {
-    const checkIsMobile = () => {
-      setIsMobile(window.innerWidth < 700);
-    };
-
-    checkIsMobile();
-    window.addEventListener('resize', checkIsMobile);
-
-    return () => window.removeEventListener('resize', checkIsMobile);
-  }, []);
-
-  useEffect(() => {
-    // Detect active item from URL
-    const params = new URLSearchParams(window.location.search);
-    const parkfield = params.get('parkfield');
-
-    if (parkfield === 'M120A-BASEBALL-1') {
-      setActiveItem('Houston');
-    } else if (parkfield === 'B058-ZN04-BASEBALL-3') {
-      const name = params.get('name');
-      if (name?.includes('McCarren')) {
-        setActiveItem('McCarren');
-      } else if (name?.includes('Ericsson')) {
-        setActiveItem('Ericsson');
-      }
+    const path = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
+    const match = navItems.find(item => item.id.toLowerCase() === path);
+    if (match) {
+      setActiveItem(match.id);
     }
   }, []);
 
@@ -71,112 +49,60 @@ export default function Nav() {
 
   return (
     <>
-      {/* Mobile Menu Button */}
-      {isMobile && (
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className='fixed top-4 right-4 z-50 p-2 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg'
-          aria-label='Toggle mobile menu'
-        >
-          <svg
-            className='w-6 h-6 text-gray-700 dark:text-gray-300'
-            fill='none'
-            stroke='currentColor'
-            viewBox='0 0 24 24'
-            xmlns='http://www.w3.org/2000/svg'
-          >
-            {isMobileMenuOpen ? (
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M6 18L18 6M6 6l12 12'
-              />
-            ) : (
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M4 6h16M4 12h16M4 18h16'
-              />
-            )}
-          </svg>
-        </button>
-      )}
-
-      {/* Mobile Overlay */}
-      {isMobile && isMobileMenuOpen && (
-        <div
-          className='fixed inset-0 bg-black bg-opacity-50 z-40'
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
-
-      {/* Navigation */}
-      <nav
-        className={`w-64 bg-gray-100 dark:bg-gray-800 h-screen p-6 border-r border-gray-200 dark:border-gray-700 z-50 transform transition-transform duration-300 ease-in-out ${
-          isMobile
-            ? `fixed ${
-                isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-              }`
-            : 'static translate-x-0'
-        }`}
-      >
-        <div className='mb-8'>
-          <h2 className='text-xl font-bold text-gray-900 dark:text-white'>
-            NYC Parks Field Availability
-          </h2>
-          <p className='text-sm text-gray-600 dark:text-gray-400'>
-            Not affiliated with the parks department.
-          </p>
-        </div>
-
-        <ul className='space-y-2'>
-          {navItems.map(item => (
-            <li key={item.id} className='flex items-center gap-2 h-12'>
-              <a
-                href={item.href}
-                className={`flex-1 text-left px-4 py-3 rounded-l-lg transition-colors duration-200 ${
-                  activeItem === item.id
-                    ? 'bg-blue-500 hover:bg-blue-600 text-white'
-                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-                }`}
-              >
-                {item.label}
-              </a>
-              <button
-                onClick={() => copyToClipboard(item.href)}
-                className={`rounded-r-lg transition-colors duration-200 h-full w-12 flex items-center justify-center ${
-                  activeItem === item.id
-                    ? 'bg-blue-500 hover:bg-blue-600 text-white'
-                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-                }`}
-                title='Copy URL to clipboard'
-              >
-                <svg
-                  className='w-4 h-4'
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                  xmlns='http://www.w3.org/2000/svg'
+      <nav className='sticky top-0 z-50 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-6'>
+        <div className='flex flex-col gap-3'>
+          <div>
+            <h1 className='text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap'>
+              NYC Parks Field Availability
+            </h1>
+            <p className='text-sm text-gray-600 dark:text-gray-400'>
+              Not affiliated with the parks department. Have another park you
+              want to add? DM Amogh on Pickleball slack
+            </p>
+          </div>
+          <div className='flex items-center gap-4 flex-wrap'>
+            {navItems.map(item => (
+              <div key={item.id} className='flex items-stretch gap-1'>
+                <a
+                  href={item.href}
+                  className={`px-4 py-3 text-base rounded-l-lg transition-colors duration-200 ${
+                    activeItem === item.id
+                      ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  }`}
                 >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z'
-                  />
-                </svg>
-              </button>
-            </li>
-          ))}
-          <li className='text-sm text-gray-600 dark:text-gray-400 mt-4'>
-            Have another park you want to add? DM Amogh on Pickleball slack
-          </li>
-        </ul>
+                  {item.label}
+                </a>
+                <button
+                  onClick={() => copyToClipboard(item.href)}
+                  className={`px-3 flex items-center border-l border-black/10 rounded-r-lg transition-colors duration-200 ${
+                    activeItem === item.id
+                      ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  }`}
+                  title='Copy URL to clipboard'
+                >
+                  <svg
+                    className='w-5 h-5'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                    xmlns='http://www.w3.org/2000/svg'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z'
+                    />
+                  </svg>
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
       </nav>
 
-      {/* Toast Notification */}
       {showToast && (
         <div className='fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-lg shadow-lg transition-opacity duration-300'>
           {toastMessage}

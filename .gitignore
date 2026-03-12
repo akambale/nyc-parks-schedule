@@ -1,6 +1,4 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-deploy.sh
-
 
 # dependencies
 /node_modules
@@ -42,8 +40,3 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# runtime cache
-/data/cache.json
-
-# digitalocean
-.deployed
