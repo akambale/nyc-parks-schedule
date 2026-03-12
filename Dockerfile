@@ -15,9 +15,8 @@ RUN npm install -g pnpm tsx
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
-COPY out/ out/
-COPY server/ server/
-COPY data/ data/
+COPY . .
+RUN pnpm build
 
 EXPOSE 8080
 CMD ["tsx", "server/index.ts"]
